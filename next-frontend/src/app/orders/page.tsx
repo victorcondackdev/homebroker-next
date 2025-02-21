@@ -1,5 +1,4 @@
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -7,13 +6,13 @@ import {
   TableHeadCell,
   TableRow,
 } from "flowbite-react";
-import { Wallet } from "../models";
-import { AssetShow } from "../components/AssetShow";
-import { WalletList } from "../components/WalletList";
-import Link from "next/link";
-import { getMyWallet } from "../queries/queries";
+import { AssetShow } from "../../components/AssetShow";
+import { OrderTypeBadge } from "../../components/OrderTypeBadge";
+import { OrderStatusBadge } from "../../components/OrderStatusBadge";
+import { WalletList } from "../../components/WalletList";
+import { getMyWallet, getOrders } from "../../queries/queries";
 
-export default async function MyWalletListPage({
+export default async function OrdersListPage({
   searchParams,
 }: {
   searchParams: Promise<{ wallet_id: string }>;
@@ -30,35 +29,35 @@ export default async function MyWalletListPage({
     return <WalletList />;
   }
 
+  const orders = await getOrders(wallet_id);
+  console.log(orders);
   return (
     <div className="flex flex-col space-y-5 flex-grow">
       <article className="format">
-        <h1>Minha carteira</h1>
+        <h1>Minhas ordens</h1>
       </article>
       <div className="overflow-x-auto w-full">
         <Table className="w-full max-w-full table-fixed">
           <TableHead>
             <TableHeadCell>Ativo</TableHeadCell>
-            <TableHeadCell>Cotação</TableHeadCell>
+            <TableHeadCell>Preço</TableHeadCell>
             <TableHeadCell>Quantidade</TableHeadCell>
-            <TableHeadCell>Comprar/vender</TableHeadCell>
+            <TableHeadCell>Tipo</TableHeadCell>
+            <TableHeadCell>Status</TableHeadCell>
           </TableHead>
           <TableBody>
-            {wallet.assets.map((walletAsset, key) => (
+            {orders.map((order, key) => (
               <TableRow key={key}>
                 <TableCell>
-                  <AssetShow asset={walletAsset.asset} />
+                  <AssetShow asset={order.asset} />
                 </TableCell>
-                <TableCell>R$ {walletAsset.asset.price}</TableCell>
-                <TableCell>{walletAsset.shares}</TableCell>
+                <TableCell>R$ {order.price}</TableCell>
+                <TableCell>{order.shares}</TableCell>
                 <TableCell>
-                  <Button
-                    color="light"
-                    as={Link}
-                    href={`/assets/${walletAsset.asset.symbol}?wallet_id=${wallet_id}`}
-                  >
-                    Comprar/vender
-                  </Button>
+                  <OrderTypeBadge type={order.type} />
+                </TableCell>
+                <TableCell>
+                  <OrderStatusBadge status={order.status} />
                 </TableCell>
               </TableRow>
             ))}
