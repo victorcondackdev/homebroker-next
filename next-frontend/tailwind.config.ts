@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import flowbite from "flowbite-react/tailwind";
+import * as flowbite from "flowbite-react/tailwind";
 //@ts-expect-error - flowbite-typography has not a type
 import flowbiteTypography from "flowbite-typography";
 
